@@ -6,13 +6,29 @@ import ImageViewer from './components/ImageViewer';
 import Button from './components/Button';
 import * as ImagePicker from 'expo-image-picker';
 import { useState } from 'react';
+import IconButton from './components/IconButton';
+import CircleButton from './components/CircleButton';
 
 const PlaceHolderImage = require('./assets/me.jpg');
 
 export default function App() 
 {
-
+  const [showAppOptions, setShowAppOptions] = useState(false);
   const [selectedImage,setSelectedImage] = useState(null);
+
+  const onReset = () => {
+
+    setShowAppOptions(false);
+
+  }
+
+  const onAddSticker = () => {
+
+  }
+
+  const onSaveImageAsync = () => {
+
+  }
 
   const PickImageAsync = async () => {
     try {
@@ -22,7 +38,10 @@ export default function App()
       });
   
       if (!result.canceled) {
+
         setSelectedImage(result.assets[0].uri);
+        setShowAppOptions(true);
+
       } else {
         alert('You did not select any image');
       }
@@ -42,10 +61,24 @@ export default function App()
         />
       </View>
 
-      <View style={styles.footerContainer}>
-          <Button theme="primary" label="Choose a photo" onPress={PickImageAsync}/>
-          <Button label="Use this photo" />
-      </View>
+
+      {
+         showAppOptions ? (
+            <View style={styles.optionsContainer}>
+                <View style={styles.optionRow}>
+                    <IconButton icon="refresh" label="Reset" onPress={onReset}/>
+                    <CircleButton onPress={onAddSticker}/>
+                    <IconButton icon="save-alt"  label="Save"  onPress={onSaveImageAsync}/>
+                </View>
+            </View>
+          ) : (
+          <View style={styles.footerContainer}>
+            <Button theme="primary" label="Choose a photo" onPress={PickImageAsync}/>
+            <Button label="Use this photo" onPress={() => setShowAppOptions(true)} />
+          </View>
+         )
+      }  
+      
 
       <StatusBar style="auto" />
     </View>
@@ -53,6 +86,17 @@ export default function App()
 }
 
 const styles = StyleSheet.create({
+
+  optionsContainer: {
+    position:"absolute",
+    bottom:80,
+  },
+  
+  optionRow:{
+    alignItems: 'center',
+    flexDirection: 'row',
+  },
+
   container: {
     flex: 1,
     backgroundColor: '#fff',
