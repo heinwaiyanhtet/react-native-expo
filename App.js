@@ -4,19 +4,46 @@ import { StyleSheet, View, Image } from 'react-native';
 // import Button from './components/Button';
 import ImageViewer from './components/ImageViewer';
 import Button from './components/Button';
+import * as ImagePicker from 'expo-image-picker';
+import { useState } from 'react';
 
 const PlaceHolderImage = require('./assets/me.jpg');
 
-export default function App() {
+export default function App() 
+{
+
+  const [selectedImage,setSelectedImage] = useState(null);
+
+  const PickImageAsync = async () => {
+    try {
+      let result = await ImagePicker.launchImageLibraryAsync({
+        allowsEditing: true,
+        quality: 1,
+      });
+  
+      if (!result.canceled) {
+        setSelectedImage(result.assets[0].uri);
+      } else {
+        alert('You did not select any image');
+      }
+    } catch (error) {
+      alert("An error occurred: " + error.message);
+    }
+
+  }
+
   return (
     <View style={styles.container}>
 
       <View style={styles.imageContainer}>
-        <ImageViewer placeholderImageSource={PlaceHolderImage}/>
+        <ImageViewer 
+            placeholderImageSource={PlaceHolderImage}
+            selectedImage={selectedImage}    
+        />
       </View>
 
       <View style={styles.footerContainer}>
-          <Button theme="primary" label="Choose a photo" />
+          <Button theme="primary" label="Choose a photo" onPress={PickImageAsync}/>
           <Button label="Use this photo" />
       </View>
 
